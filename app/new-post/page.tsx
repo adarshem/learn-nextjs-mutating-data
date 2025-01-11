@@ -1,18 +1,28 @@
+import { redirect } from 'next/navigation';
 import { storePost } from '@/lib/posts';
+import FormSubmit from '@/components/form-submit';
 
+/**
+ * Notes:  It is not allowed to define inline "use server" annotated Server Actions in Client Components.
+ * To use Server Actions in a Client Component:
+ *  - you can either export them from a separate file with "use server" at the top,
+ *  - Or pass them down through props from a Server Component.
+ */
 export default function NewPostPage() {
-  async function createPost(formData) {
-    "use server";
-    const title = formData.get('title');
-    const image = formData.get('image');
-    const content = formData.get('content');
+  async function createPost(formData: FormData) {
+    'use server';
+    const title = formData.get('title') as string | null;
+    const image = formData.get('image') as string | null;
+    const content = formData.get('content') as string | null;
 
-    storePost({
+    await storePost({
       imageUrl: '',
-      title,
-      content,
-      userId: 1
-    })
+      title: title || '',
+      content: content || '',
+      userId: 1,
+    });
+
+    redirect('/feed');
   }
 
   return (
@@ -37,8 +47,7 @@ export default function NewPostPage() {
           <textarea id="content" name="content" rows="5" />
         </p>
         <p className="form-actions">
-          <button type="reset">Reset</button>
-          <button>Create Post</button>
+          <FormSubmit />
         </p>
       </form>
     </>

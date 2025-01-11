@@ -75,7 +75,7 @@ export async function storePost(post: {
   imageUrl: string;
   title: string;
   content: string;
-  userId: string;
+  userId: number;
 }) {
   const stmt = db.prepare(`
     INSERT INTO posts (image_url, title, content, user_id)
