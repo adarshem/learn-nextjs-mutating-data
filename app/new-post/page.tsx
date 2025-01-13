@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { storePost } from '@/lib/posts';
+import { uploadImage } from '@/lib/cloudinary';
 import { FormState } from '@/lib/types';
 import PostForm from '@/components/post-form';
 
@@ -37,8 +38,16 @@ export default function NewPostPage() {
       return { errors };
     }
 
+    let imageUrl: string = '';
+
+    try {
+      imageUrl = await uploadImage(image);
+    } catch (e) {
+      throw new Error('Failed to upload image to cloudinary');
+    }
+
     await storePost({
-      imageUrl: '',
+      imageUrl,
       title: title || '',
       content: content || '',
       userId: 1,
