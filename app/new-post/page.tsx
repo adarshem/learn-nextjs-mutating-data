@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { storePost } from '@/lib/posts';
-import FormSubmit from '@/components/form-submit';
+import { FormState } from '@/lib/types';
+import PostForm from '@/components/post-form';
 
 /**
  * Notes:  It is not allowed to define inline "use server" annotated Server Actions in Client Components.
@@ -9,11 +10,32 @@ import FormSubmit from '@/components/form-submit';
  *  - Or pass them down through props from a Server Component.
  */
 export default function NewPostPage() {
-  async function createPost(formData: FormData) {
+  // Server action can either be created inside a server component and pass it down to the client through prop
+  // OR you could store server actions in a separate file and then use it in your client component
+  // You just need to make sure that "use server" directive is added at the top of that file.
+  async function createPost(prevFormData: FormState, formData: FormData) {
     'use server';
     const title = formData.get('title') as string | null;
-    const image = formData.get('image') as string | null;
+    const image = formData.get('image') as File;
     const content = formData.get('content') as string | null;
+
+    let errors = [];
+
+    if (!title || title.trim().length === 0) {
+      errors.push('Title is required');
+    }
+
+    if (!content || content.trim().length === 0) {
+      errors.push('Content is required');
+    }
+
+    if (!image || image.size === 0) {
+      errors.push('Image is required');
+    }
+
+    if (errors.length > 0) {
+      return { errors };
+    }
 
     await storePost({
       imageUrl: '',
@@ -25,31 +47,5 @@ export default function NewPostPage() {
     redirect('/feed');
   }
 
-  return (
-    <>
-      <h1>Create a new post</h1>
-      <form action={createPost}>
-        <p className="form-control">
-          <label htmlFor="title">Title</label>
-          <input type="text" id="title" name="title" />
-        </p>
-        <p className="form-control">
-          <label htmlFor="image">Image URL</label>
-          <input
-            type="file"
-            accept="image/png, image/jpeg"
-            id="image"
-            name="image"
-          />
-        </p>
-        <p className="form-control">
-          <label htmlFor="content">Content</label>
-          <textarea id="content" name="content" rows="5" />
-        </p>
-        <p className="form-actions">
-          <FormSubmit />
-        </p>
-      </form>
-    </>
-  );
+  return <PostForm action={createPost} />;
 }
