@@ -1,36 +1,59 @@
+'use client';
+
 import { togglePostLikeStatus } from '@/actions/post';
 import { formatDate } from '@/lib/format';
 import { PostObj } from '@/lib/types';
 import LikeButton from './like-icon';
+import { useOptimistic } from 'react';
 
+// https://react.dev/reference/react/useOptimistic
 function Post({ post }: { post: PostObj }) {
+  const [optimisticPost, updatePostOptimistically] = useOptimistic(
+    post,
+    (prevPost, postId) => {
+      if (!postId) {
+        return prevPost;
+      }
+
+      return {
+        ...prevPost,
+        isLiked: !prevPost.isLiked,
+      };
+    }
+  );
+
+  async function onUpdatePost(postId: number) {
+    updatePostOptimistically(postId);
+    await togglePostLikeStatus(postId);
+  }
+
   return (
     <article className="post">
       <div className="post-image">
-        <img src={post.image} alt={post.title} />
+        <img src={optimisticPost.image} alt={optimisticPost.title} />
       </div>
       <div className="post-content">
         <header>
           <div>
-            <h2>{post.title}</h2>
+            <h2>{optimisticPost.title}</h2>
             <p>
-              Shared by {post.userFirstName} on{' '}
-              <time dateTime={post.createdAt}>
-                {formatDate(post.createdAt)}
+              Shared by {optimisticPost.userFirstName} on{' '}
+              <time dateTime={optimisticPost.createdAt}>
+                {formatDate(optimisticPost.createdAt)}
               </time>
             </p>
           </div>
           <div>
             {/** bind the postId arguement s */}
             <form
-              action={togglePostLikeStatus.bind(null, post.id)}
-              className={post.isLiked ? 'liked' : ''}
+              action={onUpdatePost.bind(null, optimisticPost.id)}
+              className={optimisticPost.isLiked ? 'liked' : ''}
             >
               <LikeButton />
             </form>
           </div>
         </header>
-        <p>{post.content}</p>
+        <p>{optimisticPost.content}</p>
       </div>
     </article>
   );

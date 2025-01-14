@@ -7,7 +7,7 @@ export type PostObj = {
   userFirstName: string;
   userLastName: string;
   likes: number;
-  isLiked: number;
+  isLiked: boolean;
 };
 
 export type FormState = {

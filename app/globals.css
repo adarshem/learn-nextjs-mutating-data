@@ -197,11 +197,14 @@ main {
   stroke: #e32195;
 }
 
-.like-button:hover svg,
+.like-button:hover svg {
+  cursor: pointer;
+}
+
 .liked .like-button svg {
   fill: #e32195;
 }
 
 .liked .like-button:hover svg {
-  fill: transparent;
+  cursor: pointer;
 }
