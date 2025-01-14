@@ -84,7 +84,7 @@ export async function storePost(post: {
   return stmt.run(post.imageUrl, post.title, post.content, post.userId);
 }
 
-export async function updatePostLikeStatus(postId: string, userId: string) {
+export async function updatePostLikeStatus(postId: number, userId: number) {
   const stmt = db.prepare(`
     SELECT COUNT(*) AS count
     FROM likes
