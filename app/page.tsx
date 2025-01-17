@@ -1,6 +1,13 @@
 import { Suspense } from 'react';
 import Posts from '@/components/posts';
 import { getPosts } from '@/lib/posts';
+import { title } from 'process';
+
+// https://nextjs.org/docs/app/building-your-application/optimizing/metadata
+export const metadata = {
+  title: 'Latest Posts',
+  description: 'Browse our latest posts'
+};
 
 async function LatestPosts(): Promise<React.JSX.Element> {
   const latestPosts = await getPosts(2);

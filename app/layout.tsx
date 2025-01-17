@@ -3,10 +3,14 @@ import './globals.css';
 
 export const metadata = {
   title: 'NextPosts',
-  description: 'Browse and share amazing posts.',
+  description: 'Browse and share amazing posts.'
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
