@@ -158,9 +158,16 @@ main {
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
-.post img {
+.post-image {
+  position: relative;
   width: 8rem;
   height: 6rem;
+  
+}
+
+.post img {
+  width: 100%; /* Match the width of the container */
+  height: 100%; /* Match the height of the container */
   object-fit: cover;
 }
 

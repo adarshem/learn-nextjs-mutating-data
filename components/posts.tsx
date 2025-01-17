@@ -1,8 +1,9 @@
 'use client';
-
+import Image from 'next/image';
 import { togglePostLikeStatus } from '@/actions/post';
 import { formatDate } from '@/lib/format';
 import { PostObj } from '@/lib/types';
+import emptyImage from '@/assets/imageEmptyState.png';
 import LikeButton from './like-icon';
 import { useOptimistic } from 'react';
 
@@ -17,7 +18,7 @@ function Post({ post }: { post: PostObj }) {
 
       return {
         ...prevPost,
-        isLiked: !prevPost.isLiked,
+        isLiked: !prevPost.isLiked
       };
     }
   );
@@ -30,7 +31,11 @@ function Post({ post }: { post: PostObj }) {
   return (
     <article className="post">
       <div className="post-image">
-        <img src={optimisticPost.image} alt={optimisticPost.title} />
+        {optimisticPost?.image ? (
+          <Image src={optimisticPost.image} fill alt={optimisticPost.title} />
+        ) : (
+          <Image src={emptyImage} alt={optimisticPost.title} />
+        )}
       </div>
       <div className="post-content">
         <header>
