@@ -1,11 +1,19 @@
 'use client';
-import Image from 'next/image';
+import Image, { ImageLoaderProps } from 'next/image';
 import { togglePostLikeStatus } from '@/actions/post';
 import { formatDate } from '@/lib/format';
 import { PostObj } from '@/lib/types';
 import emptyImage from '@/assets/imageEmptyState.png';
 import LikeButton from './like-icon';
 import { useOptimistic } from 'react';
+
+function imageLoader(config: ImageLoaderProps) {
+  const [urlStart, urlEnd] = config.src.split('upload/');
+  // Request the Resized and optimized the image on the Cloudinary servers
+  // https://cloudinary.com/documentation/transformation_reference
+  const transformations = `w_200,q_${config.quality}`;
+  return `${urlStart}upload/${transformations}/${urlEnd}`;
+}
 
 // https://react.dev/reference/react/useOptimistic
 function Post({ post }: { post: PostObj }) {
@@ -32,7 +40,14 @@ function Post({ post }: { post: PostObj }) {
     <article className="post">
       <div className="post-image">
         {optimisticPost?.image ? (
-          <Image src={optimisticPost.image} fill alt={optimisticPost.title} />
+          <Image
+            loader={imageLoader}
+            src={optimisticPost.image}
+            width={200}
+            height={120}
+            alt={optimisticPost.title}
+            quality={60}
+          />
         ) : (
           <Image src={emptyImage} alt={optimisticPost.title} />
         )}
